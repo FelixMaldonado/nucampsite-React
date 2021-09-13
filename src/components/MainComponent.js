@@ -7,26 +7,38 @@ import Contact from './ContactComponent';
 import Home from './HomeComponent';
 import CampsiteInfo from './CampsiteInfoComponent';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import { addComment, fetchCampsites } from '../redux/ActionCreators';
 
 const mapStateToProps = state => {
   return{
     campsites: state.campsites,
     comments: state.comments,
     partners: state.partners,
-    promotion: state.promotion
-  }
-}
+    promotions: state.promotions
+  };
+};
+
+const mapDispatchToProps = {
+  addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text)),
+  fetchCampsites: () => (fetchCampsites())
+};
 
 
 class Main extends Component {
+
+  componentDidMount(){
+    this.props.fetchCampsites();
+  }
 
   render() {
     const HomePage = () => {
       return (
           <Home
-              campsite={this.props.campsites.filter(campsite => campsite.featured)[0]}
-              promotion={this.props.promotions.filter(promotion => promotion.featured)[0]}
+              campsite={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]}
+              campsitesLoading={this.props.campsites.isLoading}
+              campsitesErrMess={this.props.campsites.errMess}
+              promotions={this.props.promotions.filter(promotion => promotion.featured)[0]}
               partner={this.props.partners.filter(partner => partner.featured)[0]}
           />
       );
@@ -34,11 +46,14 @@ class Main extends Component {
 
   const CampsiteWithId = ({match}) => {
     return(
-      <CampsiteInfo campsite={this.props.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]} //+match - Changes a string thats a number into a number so +"1" === 1
+      <CampsiteInfo campsite={this.props.campsites.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]} //+match - Changes a string thats a number into a number so +"1" === 1
+                    isLoading={this.props.campsites.isLoading}
+                    errMess={this.props.campsites.errMess}
                     comments = {this.props.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)}
+                    addComment = {this.props.addComment}
        />
-    )
-  }
+    );
+  };
 
       return (
           <div>
@@ -48,7 +63,7 @@ class Main extends Component {
                   <Route exact path='/directory' render={() => <Directory campsites={this.props.campsites}/>}/>  {/*If you passing state data use this way*/}
                   <Route path = '/directory/:campsiteId' component={CampsiteWithId}/>
                   <Route exact path='/aboutus' render={() => <About partners={this.props.partners}/>}/>
-                  <Route exact path = '/contactus' component = {Contact}/>
+                  <Route exact path = '/contactus' component={Contact}/>
                   <Redirect to='/home' />
                 </Switch>
               <Footer/>
@@ -57,4 +72,4 @@ class Main extends Component {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(Main));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));
