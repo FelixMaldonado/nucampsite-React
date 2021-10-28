@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import { Breadcrumb, BreadcrumbItem, Button, Label, Col, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { Control, Form, Errors, actions } from 'react-redux-form';
+import { Control, Form, Errors } from 'react-redux-form';
+import {Fade, Loop} from 'react-animation-components';
 
 
 const required = val => val && val.length;
@@ -34,7 +35,8 @@ class Contact extends Component {
 
     handleSubmit(values){
         console.log("Current state is: " + JSON.stringify(values));
-        alert("Current state is: " + JSON.stringify(values));
+        console.log('Values: ' + values);
+        this.props.postFeedback(values);
         this.props.resetFeedbackForm();
     }
 
@@ -52,7 +54,8 @@ class Contact extends Component {
                         <hr />
                     </div>
                 </div>
-    
+            <Loop in interval={900} iterations={3}>
+                <Fade>
                 <div className="row row-content align-items-center">
                     <div className="col-sm-4">
                         <h5>Our Address</h5>
@@ -67,6 +70,9 @@ class Contact extends Component {
                         <a role="button" className="btn btn-link" href="mailto:fakeemail@fakeemail.co"><i className="fa fa-envelope-o" /> campsites@nucamp.co</a>
                     </div>
                 </div>
+                </Fade>
+            </Loop>
+
                 <div className="row row-content">
                     <div className="col-12">
                         <h2>Send us your Feedback</h2>

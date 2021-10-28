@@ -1,12 +1,42 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, Media } from 'reactstrap';
+import { Loading } from './LoadingComponent';
 import { Link } from 'react-router-dom';
+import { baseUrl } from '../shared/baseUrl';
+import {Fade, Stagger} from 'react-animation-components';
+
+function ParnterList(props){
+    const partners = props.partners.partners.map(partner1 => {
+        return (
+            <Fade in key={partner1.id}>
+                <Media tag='li' >
+                    <RenderPartner partner={partner1}>
+                    </RenderPartner>
+                </Media>
+            </Fade>
+        );
+    });
+    if(props.isLoading){
+        return <Loading />
+    }
+    if(props.errMess){
+        return <div className= 'col'><h4>{props.errMess}</h4></div>
+    }
+    return(<div className= 'col-mt-4'>
+            <Media list>
+              <Stagger chunk={5} in>
+                    {partners}
+              </Stagger>
+                </Media>
+           </div>)
+}
+
 
 function RenderPartner ({partner:{image, name, description}}){ 
     if (name){
         return(
             <React.Fragment>
-            <Media object src={image} atl={name} width="150" />
+            <Media object src={baseUrl + image} atl={name} width="150" />
             <Media body className="ml-5 mb-4">
                 <Media heading>
                     {name}
@@ -17,25 +47,10 @@ function RenderPartner ({partner:{image, name, description}}){
         )
 
     }
-    else{
-        return(
-            <div>Hi</div>
-        )
-        
-    }
 };
 
 function About(props) {
-    console.log(props.partners);
-    const partners = props.partners.map(partner1 => {
-        return (
-            <Media tag='li' key={partner1.id}>
-                <RenderPartner partner={partner1}>
-                </RenderPartner>
-            </Media>
-        );
-    });
-
+    console.log(props.partners); 
     return (
         <div className="container">
             <div className="row">
@@ -88,11 +103,7 @@ function About(props) {
                 <div className="col-12">
                     <h3>Community Partners</h3>
                 </div>
-                <div className="col mt-4">
-                    <Media list>
-                        {partners}
-                    </Media>
-                </div>
+            <ParnterList partners={props.partners}/>
             </div>
         </div>
     );

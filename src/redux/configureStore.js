@@ -7,7 +7,7 @@ import { Comments } from './comments';
 import { Partners } from './partners';
 import { Promotions } from './promotions';
 import {InitialFeedback} from './forms'
-
+// Store
 export const ConfigureStore = () =>{
     const store = createStore(
         combineReducers({
